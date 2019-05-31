@@ -10,6 +10,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +21,13 @@ public class Menu implements Drawable{
     private Image mazeMenu, pacMan, titleMenu, orange1, orange2, orange3, orange4;
     private static double w = 1366, h = 1000;
     private List<MenuItem> items;
+    private Group root;
+    private Rectangle [] rectangles;
 
-    public Menu(GraphicsContext gc, Status status) {
+    public Menu(GraphicsContext gc, Status status, Group root) {
         this.gc = gc;
         this.status = status;
+        this.root = root;
         items = new ArrayList<>();
         buttons();
         menuItems();
@@ -76,6 +81,9 @@ public class Menu implements Drawable{
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Main.setStatus(Status.GAME);
+//                MazeData mazeData = new MazeData(gc);
+              //  setRectangles(rectangles);
+            //    root.getChildren().addAll(rectangles);
             }
         });
         items.add(new MenuItem("Instructions", Color.rgb(255,216,121),gc, "emulogic.ttf",700, 695, 35));
@@ -83,4 +91,11 @@ public class Menu implements Drawable{
         items.add(new MenuItem("Exit", Color.rgb(255,216,121),gc, "emulogic.ttf",700, 895, 35));
     }
 
+//    public void setRectangles (Rectangle [] rectangles){
+//            this.rectangles = rectangles;
+//    }
+
+//    public Rectangle [] getRectangles () {
+//        return this.rectangles;
+//    }
 }

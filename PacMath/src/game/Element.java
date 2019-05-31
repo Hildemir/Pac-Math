@@ -17,6 +17,8 @@ public abstract class Element implements Drawable{
         this.y = y;
         this.gc = gc;
     }
+
+
     // MOUSE EVENT
     public void setOnMouseEntered (EventHandler<MouseEvent> onMouseEntered) {
         this.onMouseEntered = onMouseEntered;

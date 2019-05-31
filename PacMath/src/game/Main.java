@@ -6,11 +6,13 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 
@@ -22,7 +24,7 @@ public class Main extends Application {
     private static double w = 1366, h = 1100;
     private Group root;
     private Scene scene;
-    private static Status status = Status.MENU;
+    private static Status status = Status.GAME;
     private MouseEvent mouse;
     private KeyEvent key;
 
@@ -36,15 +38,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("game.fxml"));
-//        primaryStage.setTitle("Hello World");
-//
-//        Canvas canvas = new Canvas(300,275);
-//        GraphicsContext gc = canvas.getGraphicsContext2D();
-//        Image backGround = new Image("resources/mainImgPacMath.jpg");
-//
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
+
         root = new Group();
         scene = new Scene(root, Color.BLACK);
         primaryStage.setScene(scene);
@@ -52,8 +46,8 @@ public class Main extends Application {
         Canvas canvas = new Canvas(w,h);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         root.getChildren().add(0, canvas);
-        Menu menu = new Menu(gc, status);
-        Game gameScreen = new Game(gc, status);
+        Menu menu = new Menu(gc, status, root);
+        Game gameScreen = new Game(gc, status, root);
 
         canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -99,8 +93,33 @@ public class Main extends Application {
                 }
             } else if (status == Status.GAME) {
                         gameScreen.drawing(mouse, key,root);
-                        primaryStage.setFullScreenExitHint(""); // deixa vazia a mensagem "clique esc para sair do modo tela cheia
-                        primaryStage.setFullScreen(false);
+//                        boolean flag = gameScreen.collisionDetection(key); // a ideia eh colocar a linha anterior aqui dentro para ele redesenhar o pacman a cada eevento do pacman
+
+                for (Ghost g: gameScreen.ghost) {
+                    g.draw(gc);
+                    g.move();
+                }
+                // colar a verificaçao de colisao no movimento do teclar (by shido)
+                    for(ColRect r : gameScreen.getRectangles()) {
+                        if (r.checkCollision(gameScreen.getPacMan()) && key.getCode() == KeyCode.UP) {
+                            gc.fillText(String.valueOf("True"), 200, 50);
+                            gameScreen.getPacMan().setPosY(gameScreen.getPacMan().getPosY()+2);
+                        } else if (r.checkCollision(gameScreen.getPacMan()) && key.getCode() == KeyCode.DOWN){
+                            gc.fillText(String.valueOf("True"), 200, 50);
+                            gameScreen.getPacMan().setPosY(gameScreen.getPacMan().getPosY()-2);
+                        } else if (r.checkCollision(gameScreen.getPacMan()) && key.getCode() == KeyCode.LEFT) {
+                            gc.fillText(String.valueOf("True"), 200, 50);
+                            gameScreen.getPacMan().setPosX(gameScreen.getPacMan().getPosX()+2);
+                        } else if(r.checkCollision(gameScreen.getPacMan()) && key.getCode() == KeyCode.RIGHT){
+                            gc.fillText(String.valueOf("True"), 200, 50);
+                            gameScreen.getPacMan().setPosX(gameScreen.getPacMan().getPosX()-2);
+                        }
+                    }
+
+                    primaryStage.setFullScreenExitHint(""); // deixa vazia a mensagem "clique esc para sair do modo tela cheia
+                    primaryStage.setFullScreen(true);
+                    //98.0 82.0 MOUSE_MOVED
+                    //1017.0 1018.0 MOUSE_CLICKED
 
 
             } else if (status == Status.GAMEOVER) {         //manda pra tela de input e em seguida ranking
