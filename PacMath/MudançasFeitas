@@ -1,0 +1,9 @@
+Codigo Alterado para melhor experiência de jogo.
+Mudanças feitas da versao 1 para versao 2:
+
+*Fantasmas adicionados; 
+*Tempo adicional.Tempoa agora começa com 1:30;
+*Molduras na tela de jogo que separam as informações em campos;
+*Pacman muda de direção
+*Musicas estao tocando e reiniciando corretamente em cada tela, o que nao acontecia na versao anterior;
+*Mensagem de "Feliz dia dos namorados".

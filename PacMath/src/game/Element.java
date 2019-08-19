@@ -78,6 +78,7 @@ public abstract class Element implements Drawable{
         return inside(event, x0, x1, y0, y1);
     }
 
+
     //GEST E SETS
     public GraphicsContext getGc() {
         return gc;

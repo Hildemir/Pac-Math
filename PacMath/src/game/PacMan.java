@@ -1,6 +1,5 @@
 package game;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -10,20 +9,24 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class PacMan extends Element{
     private List <Image> pacmanAnimation = new ArrayList<>();
     private ImageView pac;
-    private Image sprit1, sprite2, sprite3;
     private double yM, xM;
     private int ind = 0;
     private boolean middle = false;
     private int num = 0;
-    private double velX = 0;
-    private double velY = 0;
+    private boolean moving = true;
+    //private int life;
+    private Image lifeIcon;
+    private boolean stopChocking = false;
+    private String currentDirection;
+
+//    private double velX = 0;
+//    private double velY = 0;
 
 
     public double w, h;
@@ -35,27 +38,38 @@ public class PacMan extends Element{
         xM = ((getX1() - getX0()) / 2 + getX0());
         yM = ((getY1() - getY0()) / 2 + getY0());
 
-        w = pacmanAnimation.get(0).getWidth()/3;
-        h = pacmanAnimation.get(0).getHeight()/3;
+        w = pacmanAnimation.get(0).getWidth()/2;
+        h = pacmanAnimation.get(0).getHeight()/2;
+        //this.life = 3;
     }
 
-    public void setVelX(double velX) {
-        this.velX = velX;
+    public double getWidth() {
+        return w;
     }
 
-    public void setVelY(double velY) {
-        this.velY = velY;
+    public double getHeight() {
+        return h;
     }
 
-    public void tick () {
-        xM += velX;
-        yM+= velY;
-    }
+    //    public void setVelX(double velX) {
+//        this.velX = velX;
+//    }
+//
+//    public void setVelY(double velY) {
+//        this.velY = velY;
+//    }
+
+//    public void tick () {
+//        xM += velX;
+//        yM+= velY;
+//    }
 
     public void imageInit () {
-        pacmanAnimation.add(new Image("/resources/sprite1.png"));
-        pacmanAnimation.add(new Image("/resources/sprite2.png"));
-        pacmanAnimation.add(new Image ("/resources/sprite3.png"));
+        pacmanAnimation.add(new Image("/resources/pacmanLEFT.gif"));
+        pacmanAnimation.add(new Image("/resources/pacmanRIGHT.gif"));
+        pacmanAnimation.add(new Image ("/resources/pacmanUP.gif"));
+        pacmanAnimation.add(new Image("/resources/pacmanDOWN.gif"));
+
     }
 
     private void mudaPacMan() {
@@ -82,54 +96,74 @@ public class PacMan extends Element{
         pac.setImage(pacmanAnimation.get(ind));
         pac.setX(getPosX());
         pac.setY(getPosY());
-        setY1(getPosY() + pac.getImage().getHeight());
-        yM = ((getY1() - getY0())/ 2 + getY0());
+//        setY1(getPosY() + pac.getImage().getHeight());
+//        yM = ((getY1() - getY0())/ 2 + getY0());
 
 
-        getGc().drawImage(pac.getImage(), getPosX(), getPosY(),pacmanAnimation.get(0).getWidth()/3,pacmanAnimation.get(0).getHeight()/3);
-        //getGc().setStroke(Color.RED);
-        //getGc().strokeRect(getPosX(), getPosY(),pacmanAnimation.get(0).getWidth()/3,pacmanAnimation.get(0).getHeight()/3);
+        getGc().drawImage(pac.getImage(), getPosX(), getPosY(),pacmanAnimation.get(0).getWidth()/2,pacmanAnimation.get(0).getHeight()/2);
+//        getGc().setStroke(Color.RED);
+//        getGc().strokeRect(getPosX(), getPosY(),pacmanAnimation.get(0).getWidth()/2.5,pacmanAnimation.get(0).getHeight()/2.5);
 
-        mudaPacMan();
-
-        if (key != null && key.getCode() == KeyCode.RIGHT && getPosX() <= 990 ) {
-            translatingX(2);
-//            if (key == null || key.getCode() == KeyCode.LEFT ){
-//                translatingX(-2);
-//            } else if(key == null && key.getCode() == KeyCode.UP){
-//                translatingY(-2);
-//            } else if(key == null && key.getCode() == KeyCode.DOWN){
-//                translatingY(2);
-//            }
-        } else if (key != null && key.getCode() == KeyCode.LEFT && getPosX() >= 70) {
-            translatingX(-2);
-//            if (key == null && key.getCode() == KeyCode.RIGHT ){
-//                translatingX(2);
-//            } else if(key == null && key.getCode() == KeyCode.UP){
-//                translatingY(-2);
-//            } else if(key == null && key.getCode() == KeyCode.DOWN){
-//                translatingY(2);
-//            }
+       // mudaPacMan();
+    if(isMoving()) {
+        if (key != null && key.getCode() == KeyCode.RIGHT && getPosX() <= 1108) {
+            setInd(1);
+            if (getPosX() >= 1100) {
+                setPosX(-25);
+            } else {
+                translatingX(2);
+            }
+        } else if (key != null && key.getCode() == KeyCode.LEFT && getPosX() >= -5) {
+            setInd(0);
+            if (getPosX() <= 0) {
+                setPosX(1100);
+            } else {
+                translatingX(-2);
+            }
         } else if (key != null && key.getCode() == KeyCode.UP && getPosY() > 45) {
+            setInd(2);
             translatingY(-2);
-//            if (key == null && key.getCode() == KeyCode.LEFT ){
-//                translatingX(-2);
-//            } else if(key == null && key.getCode() == KeyCode.RIGHT){
-//                translatingX(2);
-//            } else if(key == null && key.getCode() == KeyCode.DOWN){
-//                translatingY(2);
-//            }
-        }else if (key != null && key.getCode() == KeyCode.DOWN && getPosY() < 990) {
+        } else if (key != null && key.getCode() == KeyCode.DOWN && getPosY() < 990) {
+            setInd(3);
             translatingY(2);
-//            if (key == null && key.getCode() == KeyCode.LEFT ){
-//                translatingX(-2);
-//            } else if(key == null && key.getCode() == KeyCode.UP){
-//                translatingY(-2);
-//            } else if(key == null && key.getCode() == KeyCode.RIGHT){
-//                translatingX(2);
-//            }
+        }
+    } else {
+        if (key != null && key.getCode() == KeyCode.RIGHT && getPosX() <= 1108) {
+            if (getPosX() >= 1100) {
+                setPosX(-25);
+            } else {
+                translatingX(0);
+            }
+        } else if (key != null && key.getCode() == KeyCode.LEFT && getPosX() >= -5) {
+            if (getPosX() <= 0) {
+                setPosX(1100);
+            } else {
+                translatingX(0);
+            }
+        } else if (key != null && key.getCode() == KeyCode.UP && getPosY() > 45) {
+            translatingY(0);
+        } else if (key != null && key.getCode() == KeyCode.DOWN && getPosY() < 990) {
+            translatingY(0);
         }
     }
+//    for(int i = 0; i < life; i++){
+//        if(i == 0){
+//            getGc().drawImage(lifeIcon,1200,900,60,60);
+//        } else if (i == 1){
+//            getGc().drawImage(lifeIcon,1300,900,60,60);
+//        } else {
+//            getGc().drawImage(lifeIcon,1400,900,60,60);
+//        }
+        }
+
+        //else {
+//            int xxx = (int)(getPosX()) - 50;
+//            if (xxx % 77 < 39 && xxx % 77 != 0)
+//                translatingX(-2 );
+//            else if (xxx % 77 >= 39 && xxx % 77 != 0)
+//                translatingX(2 );
+//        }
+//    }
 
     public void translatingX (double x) {
         double novoX = getPosX() + x;
@@ -147,8 +181,46 @@ public class PacMan extends Element{
         setPosY(novoY);
     }
 
+    public List<Image> getPacmanAnimation() {
+        return pacmanAnimation;
+    }
+
     public ImageView getPac() {
         return pac;
     }
 
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
+//    public int getLife() {
+//        return life;
+//    }
+//
+//    public void decreaseLife(int life) {
+//        this.life = this.life -life;
+//        if(this.life < 0){
+//            this.life = 0;
+//        }
+//    }
+
+    public boolean getStopChocking() {
+        return stopChocking;
+    }
+
+    public void setStopChocking(boolean stopChocking) {
+        this.stopChocking = stopChocking;
+    }
+
+    public int getInd() {
+        return ind;
+    }
+
+    public void setInd(int ind) {
+        this.ind = ind;
+    }
 }

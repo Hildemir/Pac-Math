@@ -5,5 +5,6 @@ public enum Status {
     GAME,
     INSTRUCTIONS,
     RANKING,
-    GAMEOVER
+    GAMEOVER,
+    CLOSE
 }
